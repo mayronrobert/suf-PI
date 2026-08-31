@@ -1,0 +1,57 @@
+{% if atual %}
+    {% if atual.status == 'em_atendimento' %}
+        <div class="card text-white bg-info mb-4 shadow">
+            <div class="card-header bg-dark text-white fw-bold">VOCÊ ESTÁ SENDO ATENDIDO</div>
+            <div class="card-body text-center py-4">
+                <h1 class="display-3 fw-bold">{{ atual.senha }}</h1>
+                <h3 class="card-title">{{ atual.nome }}</h3>
+                <p class="card-text fs-5">Seu atendimento está em andamento.</p>
+            </div>
+        </div>
+    {% else %}
+        <div class="card text-dark bg-warning mb-4 shadow">
+            <div class="card-header bg-dark text-white fw-bold">QUEM ESTÁ NA FILA</div>
+            <div class="card-body text-center py-4">
+                <h1 class="display-3 fw-bold">{{ atual.senha }}</h1>
+                <h3 class="card-title">{{ atual.nome }}</h3>
+                <p class="card-text fs-5">Posição atual na fila: <strong>{{ posicao }}</strong></p>
+                <p class="text-muted">Aguarde até que seu número seja chamado.</p>
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info text-center py-4 shadow-sm" role="alert">
+        <h4 class="alert-heading">Sem atendimentos</h4>
+        <p class="mb-0">Você não possui atendimentos agendados no momento.</p>
+    </div>
+{% endif %}
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-secondary text-white fw-bold">
+        Atendimentos Concluídos ({{ historico.count }} itens)
+    </div>
+    <div class="card-body">
+        <table class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Senha</th>
+                    <th>Nome</th>
+                    <th>Horário</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in historico %}
+                    <tr>
+                        <td class="fw-bold text-muted">{{ p.senha }}</td>
+                        <td>{{ p.nome }}</td>
+                            <td>{% load tz %}{% localtime on %}{{ p.horario_chegada|date:"d/m H:i" }}{% endlocaltime %}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-3">Nenhum atendimento finalizado.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

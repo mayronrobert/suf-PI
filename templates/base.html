@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Painel{% endblock %} — Clínica</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <header class="app-header shadow-sm py-3 mb-4">
+    <div class="container d-flex align-items-center justify-content-between">
+      <a href="{% url 'home' %}" class="app-brand d-flex align-items-center text-decoration-none text-reset">
+        <img src="{% static 'image_8beb896a_1-removebg-preview.png' %}" alt="Logo SUF" width="220" class="me-3">
+        <div>
+          <h1 class="h5 mb-0">SUF</h1>
+          <small>Sistema Único de Filas</small>
+        </div>
+      </a>
+      <nav class="d-flex align-items-center gap-3">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-light">Início</a>
+        <a href="{% url 'dashboard_cliente' %}" class="btn btn-sm btn-light">Painel admin</a>
+        <a href="{% url 'dashboard_medico' %}" class="btn btn-sm btn-light">Painel Médico</a>
+        {% if request.user.is_authenticated %}
+          <span class="ms-2">Olá, <strong>{{ request.user.get_short_name|default:request.user.username }}</strong></span>
+          <a href="/accounts/logout/" class="btn btn-outline-light btn-sm ms-2">Sair</a>
+        {% else %}
+          <a href="/accounts/login/" class="btn btn-light btn-sm ms-2">Entrar</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Modal de confirmação global -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmação</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmModalMessage">Tem certeza que deseja continuar?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <a id="confirmModalOk" class="btn btn-primary" href="#">Confirmar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center text-muted py-4 mt-5">
+    <small>© {{ now|date:'Y' }} Clínica — Projeto de Demonstração</small>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

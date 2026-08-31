@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Chamadas - Dr(a). {{ medico.nome_completo }}</title>
+    <!-- Bootstrap para estilização rápida -->
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Olá, Dr(a). {{ medico.nome_completo }}</h2>
+        <span class="badge bg-secondary fs-6">{{ medico.especialidade }}</span>
+    </div>
+
+    <!-- BLOCO DINÂMICO DA FILA GERAL -->
+    {% if proximo %}
+        {% if eh_meu_paciente %}
+            <!-- CARTÃO VERDE: O paciente é deste médico -->
+            <div class="card text-white bg-success mb-4 shadow">
+                <div class="card-header bg-dark text-white fw-bold">PACIENTE DA VEZ NA CLÍNICA</div>
+                <div class="card-body text-center py-4">
+                    <h1 class="display-3 fw-bold">{{ proximo.senha }}</h1>
+                    <h3 class="card-title">{{ proximo.nome }}</h3>
+                    <p class="card-text fs-5">Este paciente está agendado com você. Pode iniciar o atendimento!</p>
+                    <a href="{% url 'chamar_paciente' proximo.id %}" class="btn btn-light btn-lg fw-bold px-5 mt-2">Chamar para o Consultório</a>
+                </div>
+            </div>
+        {% else %}
+            <!-- CARTÃO VERMELHO: O paciente é de outro médico -->
+            <div class="card text-white bg-danger mb-4 shadow">
+                <div class="card-header bg-dark text-white fw-bold">PACIENTE DA VEZ NA CLÍNICA</div>
+                <div class="card-body text-center py-4">
+                    <h1 class="display-4 opacity-50">{{ proximo.senha }}</h1>
+                    <h3>{{ proximo.nome }}</h3>
+                    <p class="card-text fs-5 fw-bold">⚠️ ATENÇÃO: Este paciente pertence ao Dr(a). {{ proximo.medico_destinado.nome_completo }}.</p>
+                    <button class="btn btn-secondary btn-lg mt-2" disabled>Aguarde sua vez (Botão Bloqueado)</button>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <!-- Caso a clínica não tenha nenhum paciente na fila -->
+        <div class="alert alert-info text-center py-4 shadow-sm" role="alert">
+            <h4 class="alert-heading">Fila Vazia!</h4>
+            <p class="mb-0">Não há nenhum paciente aguardando atendimento no momento.</p>
+        </div>
+    {% endif %}
+
+    <!-- TABELA DA FILA EXCLUSIVA DO MÉDICO LOGADO -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-primary text-white fw-bold">
+            Sua Fila Particular de Espera ({{ minha_fila.count }} pacientes)
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Senha</th>
+                        <th>Nome do Paciente</th>
+                        <th>Horário de Chegada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paciente in minha_fila %}
+                        <tr>
+                            <td class="fw-bold text-primary">{{ paciente.senha }}</td>
+                            <td>{{ paciente.nome }}</td>
+                            <td>{{ paciente.horario_chegada|date:"H:i" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-3">Você não tem mais pacientes agendados para hoje na sua fila.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Apresentação de Resultados Comerciais</title>
+</head>
+<body>
+
+    <h1>Relatório de Vendas Semestral</h1>
+    
+    <h2>Desempenho Geral da Equipe e Faturamento</h2>
+    
+    <p>Este relatório apresenta o fechamento consolidado das metas comerciais do último semestre. Os dados abaixo demonstram o crescimento do faturamento mensal, a contagem física de itens despachados e o engajamento dos nossos principais parceiros de negócios.</p>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Mês</th>
+                <th>Faturamento</th>
+                <th>Produtos Vendidos</th>
+                <th>Status da Meta</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Janeiro</td>
+                <td>R$ 150.000,00</td>
+                <td>1.200 unidades</td>
+                <td>Atingida</td>
+            </tr>
+            <tr>
+                <td>Fevereiro</td>
+                <td>R$ 185.000,00</td>
+                <td>1.450 unidades</td>
+                <td>Superada</td>
+            </tr>
+            <tr>
+                <td>Março</td>
+                <td>R$ 130.000,00</td>
+                <td>980 unidades</td>
+                <td>Não Atingida</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Para visualizar a análise detalhada de cada vendedor, acesse o nosso <a href="https://exemplo-powerbi.com.br">Dashboard Completo no Power BI</a>.</p>
+
+    <h3>Principais Categorias de Clientes Atendidos</h3>
+    <ul>
+        <li>Grandes Distribuidores (Foco em Volume)</li>
+        <li>Clientes Corporativos Diretos (Foco em Margem)</li>
+        <li>Vendas Governamentais (Contratos de Longo Prazo)</li>
+    </ul>
+
+    <h3>Representação Visual do Crescimento</h3>
+    <img src="https://unsplash.com" alt="Gráfico de crescimento de vendas representando sucesso da equipe comerciais" width="500">
+
+</body>
+</html>

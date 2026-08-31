@@ -1,0 +1,103 @@
+{% if proximo %}
+    {% if eh_meu_paciente %}
+        <div class="card text-white bg-success mb-4 shadow">
+            <div class="card-header bg-dark text-white fw-bold">PACIENTE DA VEZ NA CLÍNICA</div>
+            <div class="card-body text-center py-4">
+                <h1 class="display-3 fw-bold">{{ proximo.senha }}</h1>
+                <h3 class="card-title">{{ proximo.nome }}</h3>
+                <p class="card-text fs-5">Este paciente está agendado com você. Pode iniciar o atendimento!</p>
+                <a href="{% url 'chamar_paciente' proximo.id %}" class="btn btn-light btn-lg fw-bold px-5 mt-2">Chamar para o Consultório</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="card text-white bg-danger mb-4 shadow">
+            <div class="card-header bg-dark text-white fw-bold">PACIENTE DA VEZ NA CLÍNICA</div>
+            <div class="card-body text-center py-4">
+                <h1 class="display-4 opacity-50">{{ proximo.senha }}</h1>
+                <h3>{{ proximo.nome }}</h3>
+                <p class="card-text fs-5 fw-bold">⚠️ ATENÇÃO: Este paciente pertence ao Dr(a). {{ proximo.medico_destinado.nome_completo }}.</p>
+                <button class="btn btn-secondary btn-lg mt-2" disabled>Aguarde sua vez (Botão Bloqueado)</button>
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    {% comment %} Mostrar paciente em atendimento no consultório, caso exista {% endcomment %}
+    {% with minha_fila.model.objects.filter(medico_destinado=medico, status='em_atendimento').first as max_atendendo %}
+        {% if max_atendendo %}
+            <div class="card text-white bg-info mb-4 shadow">
+                <div class="card-header bg-dark text-white fw-bold">EM ATENDIMENTO NO SEU CONSULTÓRIO</div>
+                <div class="card-body text-center py-4">
+                    <h1 class="display-3 fw-bold">{{ max_atendendo.senha }}</h1>
+                    <h3 class="card-title">{{ max_atendendo.nome }}</h3>
+                    <p class="card-text fs-5">Você está atendendo este paciente atualmente.</p>
+                    <a href="{% url 'finalizar_atendimento' max_atendendo.id %}" class="btn btn-dark btn-lg fw-bold px-5 mt-2">Finalizar Consulta</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center py-4 shadow-sm" role="alert">
+                <h4 class="alert-heading">Fila Vazia!</h4>
+                <p class="mb-0">Não há nenhum paciente aguardando atendimento no momento.</p>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endif %}
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-primary text-white fw-bold">
+        Sua Fila Particular de Espera ({{ minha_fila.count }} pacientes)
+    </div>
+    <div class="card-body">
+        <table class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Senha</th>
+                    <th>Nome do Paciente</th>
+                    <th>Horário de Chegada</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for paciente in minha_fila %}
+                    <tr>
+                        <td class="fw-bold text-primary">{{ paciente.senha }}</td>
+                        <td>{{ paciente.nome }}</td>
+                        <td>{{ paciente.horario_chegada|date:"H:i" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-3">Você não tem mais pacientes na fila hoje.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-secondary text-white fw-bold">
+        Seus Atendimentos Concluídos Hoje ({{ historico.count }} pacientes)
+    </div>
+    <div class="card-body">
+        <table class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Senha</th>
+                    <th>Nome do Paciente</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for paciente in historico %}
+                    <tr>
+                        <td class="fw-bold text-muted">{{ paciente.senha }}</td>
+                        <td>{{ paciente.nome }}</td>
+                        <td><span class="badge bg-success">Concluído</span></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-3">Nenhum atendimento finalizado nesta data.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

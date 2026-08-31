@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUF | Painel do Paciente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#14231f',
+                        mint: '#b9f3d0',
+                        coral: '#ff765f',
+                        paper: '#f5f3ed'
+                    },
+                    fontFamily: {
+                        display: ['Georgia', 'serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { background: #f5f3ed; color: #14231f; }
+        .grain { background-image: radial-gradient(#14231f18 .7px, transparent .7px); background-size: 8px 8px; }
+        .bar { transform-origin: bottom; animation: rise .65s cubic-bezier(.2,.8,.2,1) both; }
+        @keyframes rise { from { transform: scaleY(0); opacity: .2; } to { transform: scaleY(1); opacity: 1; } }
+        .reveal { animation: reveal .55s ease both; }
+        @keyframes reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .field { width: 100%; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); border-radius: .75rem; padding: .75rem; color: white; outline: none; }
+        .field::placeholder { color: rgba(255,255,255,.5); }
+        .field:focus { border-color: #b9f3d0; }
+        option { color: #14231f; }
+    </style>
+</head>
+{% load static %}
+<body class="min-h-screen grain">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#dcecf2] shadow-sm/20">
+        <div class="max-w-6xl mx-auto px-5 py-3">
+            <a href="{% url 'home' %}" class="flex items-center justify-center gap-3" style="height: 140px;">
+                <img src="{% static 'image_8beb896a_1-removebg-preview.png' %}" width="697" height="394" alt="Logo SUF" class="object-contain" style="width: 220px; height: auto; flex-shrink: 0;">
+                <span style="display: flex; flex-direction: column; gap: 4px; color: #0f2d3d;">
+                    <strong style="font-size: 42px; line-height: 1; font-weight: 800;">SUF</strong>
+                    <small style="font-size: 10px; line-height: 1.2; letter-spacing: 1.5px; font-weight: 700; text-transform: uppercase;">Sistema Único de Filas</small>
+                </span>
+            </a>
+            <nav class="flex justify-center gap-3 pb-3" aria-label="Navegação principal">
+                <a href="{% url 'home' %}" class="px-4 py-2 rounded-full text-sm font-semibold bg-ink text-paper">Início</a>
+                <a href="{% url 'dashboard_cliente' %}" class="px-4 py-2 rounded-full text-sm font-semibold bg-white/70 hover:bg-coral hover:text-paper transition">Painel admin</a>
+                <a href="{% url 'dashboard_medico' %}" class="px-4 py-2 rounded-full text-sm font-semibold bg-white/70 hover:bg-coral hover:text-paper transition">Painel Médico</a>
+            </nav>
+        </div>
+    </header>
+    <div class="h-[210px]"></div>
+
+    <main id="inicio" class="max-w-6xl mx-auto px-5 pb-16">
+        <section class="py-14 md:py-20 grid lg:grid-cols-[1.15fr_.85fr] gap-12 items-end reveal">
+            <div>
+                <p class="text-coral font-bold uppercase tracking-[.2em] text-xs mb-5">Cuidado perto de você</p>
+                <h1 class="font-display text-5xl md:text-7xl leading-[.95] tracking-tight max-w-3xl">Saúde pública,<br><em class="text-coral">mais humana.</em></h1>
+                <p class="mt-6 text-lg text-ink/65 max-w-xl">Encontre a unidade mais tranquila, acompanhe a espera e marque seu atendimento em poucos passos.</p>
+                <a href="#agendar" class="inline-flex items-center gap-3 mt-8 bg-ink text-paper px-5 py-3 rounded-full font-semibold text-sm hover:bg-coral transition">Agendar atendimento <span aria-hidden="true">↘</span></a>
+            </div>
+            <div class="bg-ink text-paper rounded-[2rem] p-7 md:p-9 relative overflow-hidden">
+                <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full border-[18px] border-mint/20"></div>
+                <div class="flex justify-between items-start">
+                    <span class="text-mint text-3xl">✦</span>
+                    <span class="text-xs uppercase tracking-widest text-paper/50">Atualizado agora</span>
+                </div>
+                <p class="font-display text-3xl mt-10">A rede está respirando bem hoje.</p>
+                <div class="mt-8 pt-5 border-t border-paper/15 flex justify-between">
+                    <span class="text-paper/55 text-sm">Tempo médio de espera</span>
+                    <strong class="text-mint text-2xl">48 min</strong>
+                </div>
+            </div>
+        </section>
+
+        <section id="agendar" class="scroll-mt-24 py-14 grid lg:grid-cols-[.8fr_1.2fr] gap-10 items-start reveal" style="animation-delay:.1s">
+            <div>
+                <p class="text-xs uppercase tracking-[.2em] font-bold text-coral">Área de atendimento</p>
+                <h2 class="font-display text-4xl md:text-5xl mt-3">Agendar saúde</h2>
+                <p class="mt-4 text-ink/60 max-w-sm">Escolha a unidade, a especialidade e o melhor horário para cuidar da sua saúde.</p>
+            </div>
+            <form id="formulario" method="post" action="{% url 'agendar_paciente' %}" class="bg-ink text-paper rounded-[2rem] p-6 md:p-8 grid sm:grid-cols-2 gap-4">
+                {% csrf_token %}
+                {% if request.GET.created %}
+                    <div class="sm:col-span-2 rounded-xl border border-mint/40 bg-mint/20 px-4 py-3 text-sm font-medium text-ink shadow-sm">Agendamento criado com sucesso! Sua senha: <strong>{{ request.GET.senha }}</strong></div>
+                {% endif %}
+                <label class="sm:col-span-2 text-xs uppercase tracking-widest text-paper/55">Dados do paciente</label>
+                <input required name="nome" placeholder="Nome completo" class="field">
+                <input required name="cpf" placeholder="CPF" class="field" inputmode="numeric" pattern="[0-9]{11}" maxlength="11">
+                <input required name="telefone" placeholder="Telefone" class="field">
+                <select required name="unidade" class="field sm:col-span-2">
+                    <option value="">Escolha uma unidade</option>
+                </select>
+                <select required name="especialidade" class="field">
+                    <option value="">Especialidade</option>
+                    <option>Clínica geral</option>
+                    <option>Pediatria</option>
+                    <option>Cardiologia</option>
+                </select>
+                <select required name="horario" class="field">
+                    <option value="">Horário</option>
+                    <option>08:00</option>
+                    <option>10:00</option>
+                    <option>12:00</option>
+                    <option>14:00</option>
+                    <option>16:00</option>
+                </select>
+                <button type="submit" class="sm:col-span-2 bg-mint text-ink font-bold py-3 rounded-full hover:bg-coral hover:text-paper transition">Confirmar agendamento <span aria-hidden="true">→</span></button>
+                <p id="mensagem" class="hidden sm:col-span-2 text-mint text-sm"></p>
+            </form>
+        </section>
+
+        <section id="rede" class="scroll-mt-24 py-8 reveal" style="animation-delay:.2s">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-6">
+                <div>
+                    <p class="text-xs uppercase tracking-[.2em] font-bold text-ink/45">Mapa vivo</p>
+                    <h2 class="font-display text-4xl mt-2">Escolha onde ser atendido</h2>
+                </div>
+                <label>
+                    <span class="sr-only">Buscar unidade</span>
+                    <input id="busca" type="search" placeholder="Buscar por região..." class="w-full md:w-64 bg-transparent border-b border-ink/25 py-2 pr-3 outline-none focus:border-coral placeholder:text-ink/40">
+                </label>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4" id="unidades"></div>
+        </section>
+
+        <section id="painel" class="hidden my-8 bg-white/70 border border-ink/10 rounded-[2rem] p-6 md:p-8 scroll-mt-24">
+            <div class="flex justify-between gap-4 items-start">
+                <div>
+                    <p class="text-xs uppercase tracking-widest text-coral font-bold">Leitura operacional</p>
+                    <h3 id="grafico-titulo" class="font-display text-3xl mt-2"></h3>
+                    <p class="text-sm text-ink/55 mt-1">Média estimada de espera por horário.</p>
+                </div>
+                <button id="fechar-painel" aria-label="Fechar painel" class="text-2xl text-ink/50 hover:text-coral">×</button>
+            </div>
+            <div id="grafico" class="h-56 mt-8 flex items-end gap-3 md:gap-8 border-b border-ink/15 px-2"></div>
+        </section>
+    </main>
+
+    <footer class="border-t border-ink/10 py-7">
+        <div class="max-w-6xl mx-auto px-5 flex justify-between text-xs text-ink/50">
+            <span>SUF · Sistema Único de Filas</span>
+            <span>Em caso de emergência, ligue 192.</span>
+        </div>
+    </footer>
+
+    <script>
+        const unidades = [
+            { nome: 'Hospital Regional da Asa Norte', sigla: 'HRAN', regiao: 'Asa Norte', espera: 15, status: 'Estável', dados: [20, 45, 60, 30, 15] },
+            { nome: 'UPA Ceilândia I', sigla: 'UPA', regiao: 'Ceilândia Centro', espera: 110, status: 'Alta demanda', dados: [40, 75, 110, 85, 50] },
+            { nome: 'Hospital Regional de Samambaia', sigla: 'HRSam', regiao: 'Samambaia Sul', espera: 45, status: 'Moderado', dados: [30, 50, 70, 45, 25] },
+            { nome: 'UPA Sobradinho', sigla: 'UPA', regiao: 'Sobradinho', espera: 20, status: 'Estável', dados: [15, 30, 40, 20, 10] }
+        ];
+
+        const cards = document.querySelector('#unidades');
+        const select = document.querySelector('[name="unidade"]');
+        const statusClass = s => s === 'Estável' ? 'bg-mint text-ink' : s === 'Moderado' ? 'bg-amber-100 text-amber-800' : 'bg-coral text-paper';
+
+        function render(lista = unidades) {
+            cards.innerHTML = lista.length ? lista.map((u, i) => `
+                <button data-index="${unidades.indexOf(u)}" class="unit-card text-left bg-white/70 border border-ink/10 rounded-2xl p-5 hover:-translate-y-1 hover:border-coral transition reveal" style="animation-delay:${i * .06}s">
+                    <div class="flex justify-between gap-3">
+                        <div>
+                            <span class="text-xs font-bold text-coral">${u.sigla}</span>
+                            <h3 class="font-semibold mt-1">${u.nome}</h3>
+                        </div>
+                        <span class="text-[11px] font-bold px-2 py-1 rounded-full whitespace-nowrap ${statusClass(u.status)}">${u.status}</span>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-ink/10 flex justify-between text-sm text-ink/55">
+                        <span>⌖ ${u.regiao}</span>
+                        <span>Espera <strong class="text-ink">${u.espera} min</strong></span>
+                    </div>
+                </button>
+            `).join('') : '<p class="text-ink/50">Nenhuma unidade encontrada.</p>';
+
+            document.querySelectorAll('.unit-card').forEach(card => {
+                card.addEventListener('click', () => mostrarGrafico(unidades[card.dataset.index]));
+            });
+        }
+
+        function mostrarGrafico(u) {
+            document.querySelector('#painel').classList.remove('hidden');
+            document.querySelector('#grafico-titulo').textContent = u.nome;
+            const max = Math.max(...u.dados);
+            document.querySelector('#grafico').innerHTML = u.dados.map((v, i) => `
+                <div class="flex-1 h-full flex flex-col justify-end items-center gap-3">
+                    <span class="text-xs font-bold">${v}m</span>
+                    <div class="bar w-full max-w-12 bg-coral rounded-t-lg" style="height:${Math.max(8, v / max * 78)}%; animation-delay:${i * .08}s"></div>
+                    <span class="text-xs text-ink/50">${['08:00', '10:00', '12:00', '14:00', '16:00'][i]}</span>
+                </div>
+            `).join('');
+            document.querySelector('#painel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        unidades.forEach(u => {
+            const option = document.createElement('option');
+            option.value = u.nome;
+            option.textContent = `${u.nome} (${u.regiao})`;
+            select.append(option);
+        });
+
+        document.querySelector('#busca').addEventListener('input', e => {
+            const termo = e.target.value.toLowerCase();
+            render(unidades.filter(u => `${u.nome} ${u.regiao}`.toLowerCase().includes(termo)));
+        });
+
+        document.querySelector('#fechar-painel').addEventListener('click', () => {
+            document.querySelector('#painel').classList.add('hidden');
+        });
+
+        // formulário agora envia para backend via POST
+
+        render();
+    </script>
+</body>
+</html>

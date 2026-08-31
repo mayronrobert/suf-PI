@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Chamadas - Dr(a). {{ medico.nome_completo }}</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Olá, Dr(a). {{ medico.nome_completo }}</h2>
+        <span class="badge bg-secondary fs-6">{{ medico.especialidade }}</span>
+    </div>
+
+    <!-- Inclui o fragmento de fila (pode ser atualizado via AJAX) -->
+    {% include 'conteudo_fila.html' %}
+
+</div>
+
+</body>
+</html>

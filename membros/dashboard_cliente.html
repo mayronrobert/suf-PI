@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Painel de Atendimento</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <script src="https://unpkg.com"></script>
+    <style>
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+    <div class="mb-4">
+        <h2>Bem-vindo(a), {{ request.user.get_full_name|default:request.user.username }}</h2>
+        <p class="text-muted">Acompanhe seu status na clínica em tempo real.</p>
+    </div>
+
+    <div id="container-cliente" 
+         hx-get="{% url 'atualizar_cliente_fragmento' %}" 
+         hx-trigger="every 5s" 
+         hx-target="#container-cliente">
+        
+        {% include 'conteudo_cliente.html' %}
+        
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Meu Painel — {{ request.user.get_short_name|default:request.user.username }}{% endblock %}
+
+{% block content %}
+    <div class="mb-4">
+        <h2 class="mb-0">Bem-vindo(a) admin</h2>
+        <p class="text-muted">Acompanhe seu status na clínica em tempo real.</p>
+    </div>
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-title">Atendimento atual</div>
+            <div class="stat-value">{% if atual %}{{ atual.senha }}{% else %}-{% endif %}</div>
+        </div>
+        <div class="stat-card" style="border-left-color:#f59e0b">
+            <div class="stat-title">Posição na fila</div>
+            <div class="stat-value">{% if posicao %}{{ posicao }}{% else %}-{% endif %}</div>
+        </div>
+        <div class="stat-card" style="border-left-color:#10b981">
+            <div class="stat-title">Concluídos</div>
+            <div class="stat-value">{{ concluidos_count }}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <div id="container-cliente" hx-get="{% url 'atualizar_cliente_fragmento' %}" hx-trigger="every 5s" hx-target="#container-cliente">
+                {% include 'conteudo_cliente.html' %}
+            </div>
+
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header bg-dark text-white fw-bold">Agenda de consultas</div>
+                <div class="card-body p-0">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Médico</th>
+                                <th>Status</th>
+                                <th>Horário</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for consulta in agenda %}
+                                <tr>
+                                    <td>{{ consulta.nome }}</td>
+                                    <td>{{ consulta.medico_destinado.nome_completo }}<br><small class="text-muted">{{ consulta.medico_destinado.especialidade }}</small></td>
+                                    <td>
+                                        <span class="badge {% if consulta.status == 'aguardando' %}bg-warning text-dark{% elif consulta.status == 'em_atendimento' %}bg-info text-dark{% else %}bg-success{% endif %}">
+                                            {{ consulta.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ consulta.horario_chegada|date:"d/m H:i" }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-3">Nenhuma consulta registrada.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Detalhes do Atendimento</h5>
+                    <p class="small-muted">Médico responsável</p>
+                    <p><strong>{% if medico %}{{ medico.nome_completo }} — {{ medico.especialidade }}{% else %}-{% endif %}</strong></p>
+
+                    <p class="small-muted">Telefone de contato</p>
+                    <p>{% if telefone %}<a href="tel:{{ telefone }}">{{ telefone }}</a>{% else %}-{% endif %}</p>
+
+                    <p class="small-muted">Tempo estimado de espera</p>
+                    <p><strong>{% if estimated_minutes is not None %}{{ estimated_minutes }} min{% else %}-{% endif %}</strong></p>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" onclick="showToast('Notificação enviada à recepção')">Notificar Chegada</button>
+                        <a href="#" class="btn btn-outline-secondary" data-confirm="Deseja cancelar o atendimento?">Cancelar Atendimento</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Observações</h6>
+                    <p class="small-muted">Se precisar alterar dados, entre em contato com a recepção.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+ 

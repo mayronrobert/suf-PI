@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Painel do Médico — {{ medico.nome_completo }}{% endblock %}
+
+{% block content %}
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h2 class="mb-0">Olá, Dr(a). {{ medico.nome_completo }}</h2>
+            <small class="text-muted">{{ medico.especialidade }}</small>
+        </div>
+    </div>
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-title">Na sua fila</div>
+            <div class="stat-value">{{ minha_fila_count }}</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #f59e0b">
+            <div class="stat-title">Em atendimento</div>
+            <div class="stat-value">{{ em_atendimento_count }}</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #10b981">
+            <div class="stat-title">Finalizados hoje</div>
+            <div class="stat-value">{{ historico.count }}</div>
+        </div>
+    </div>
+
+    {% include 'conteudo_fila.html' %}
+{% endblock %}
+

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Início — SUF{% endblock %}
+
+{% block content %}
+  <div class="py-5 text-center">
+    <div class="hero py-5">
+      <div class="container px-0">
+        <div class="row align-items-center">
+          <div class="col-md-7">
+            <h1 class="display-4 fw-bold">Sistema Único de Filas — SUF</h1>
+            <p class="lead text-muted">Gerencie filas, acompanhe atendimentos e ofereça uma experiência mais humana aos pacientes.</p>
+            <div class="mt-4">
+              <a href="{% url 'dashboard_cliente' %}" class="btn btn-primary btn-lg me-2">Painel admin</a>
+              <a href="{% url 'dashboard_medico' %}" class="btn btn-outline-light btn-lg">Painel Médico</a>
+            </div>
+          </div>
+          <div class="col-md-5 text-md-end mt-4 mt-md-0">
+            <div class="home-stats shadow-sm p-4 rounded">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <small class="text-muted">Membros</small>
+                <h3 class="mb-0">{{ total_membros }}</h3>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <small class="text-muted">Médicos</small>
+                <h3 class="mb-0">{{ medicos_count }}</h3>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Na fila</small>
+                <h3 class="mb-0">{{ pacientes_aguardando }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <div class="card h-100 p-4">
+        <h5>Fluxo em tempo real</h5>
+        <p class="text-muted small">Acompanhe chamadas e atualizações em tempo real com HTMX; reduza espera e melhore o atendimento.</p>
+        <a href="{% url 'dashboard_medico' %}" class="stretched-link"></a>
+      </div>
+    </div>
+    <div class="col-md-4 mt-3 mt-md-0">
+      <div class="card h-100 p-4">
+        <h5>Experiência para o paciente</h5>
+        <p class="text-muted small">Painéis simples e responsivos que informam o paciente sobre tempo estimado e posição na fila.</p>
+        <a href="{% url 'dashboard_cliente' %}" class="stretched-link"></a>
+      </div>
+    </div>
+    <div class="col-md-4 mt-3 mt-md-0">
+      <div class="card h-100 p-4">
+        <h5>Administração</h5>
+        <p class="text-muted small">Área administrativa para gerenciar membros, médicos e filas rapidamente.</p>
+        <a href="{% url 'admin:index' %}" class="stretched-link"></a>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
